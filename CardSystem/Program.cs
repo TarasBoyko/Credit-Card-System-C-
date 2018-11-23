@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace CardSystem
 {
+    public enum CardVendor
+    {
+        AmericanExpress,
+        Maestro,
+        MasterCard,
+        Visa,
+        JCB,
+        Unknown
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
-            CreditCard cc = new CreditCard();
+            CreditCard creditCard = new CreditCard("378282246310005");
 
             string[] arr = new string[]
             {
@@ -53,7 +63,8 @@ namespace CardSystem
 
             foreach (string str in arr)
             {
-                Console.WriteLine("Validation " + cc.IsCreditCardNumberValid(str) + " vendor " + cc.GetCreditCardVendorAsString(str));
+                creditCard.Number = str;
+                Console.WriteLine("Validation " + creditCard.IsNumberValid() + " vendor " + creditCard.GetVendorAsString());
 
                 foreach (char c in new char[]{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'} )
                 {
@@ -63,7 +74,8 @@ namespace CardSystem
 
                         st[str.Length-1] = c;
 
-                        Console.WriteLine(cc.IsCreditCardNumberValid(st.ToString()) + " " + st.ToString());
+                        creditCard.Number = st.ToString();
+                        Console.WriteLine(creditCard.IsNumberValid() + " " + st.ToString());
                     }
                 }
 
@@ -76,13 +88,15 @@ namespace CardSystem
             for (int i = 0;  i < arr.Length; i++ )
             {
                 string card = arr[i].Substring(0, 6) + hughNumbers[i];
+                creditCard.Number = arr[i].Substring(0, 6) + hughNumbers[i];
                 Console.WriteLine(card);
                 try
                 {
-                    while (cc.IsCreditCardNumberValid(card))
+                    while (creditCard.IsNumberValid())
                     {
-                        Console.WriteLine(card + " " + cc.GetCreditCardVendorAsString(card));
-                        card = cc.GenerateNextCreditCardNumber(card);
+                        Console.WriteLine(card + " " + creditCard.GetVendorAsString());
+                        card = creditCard.ReturnNextNumber();
+                        creditCard.Number = card;
                     }
                 }
                 catch (OverflowException e)

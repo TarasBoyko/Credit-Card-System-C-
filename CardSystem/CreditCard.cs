@@ -7,54 +7,63 @@ using System.Threading.Tasks;
 
 namespace CardSystem
 {
-
-
+    // The class stores the number of a credit card and provides methods for
+    // verification the number, getting next number and getting the vendor of the
+    // credit card.
+    // All methods of the class are thread unsafe.
     class CreditCard
     {
-        public enum CardVendor
+        // PUBLIC SECTION:
+        public CreditCard(string number)
         {
-            AmericanExpress,
-            Maestro,
-            MasterCard,
-            Visa,
-            JCB,
-            Unknown
+            m_number = number;
         }
-        const int kIINdigits = 6; // number of digits of issuer identification number
 
-        // Retunrs credit card vendor by @inputCardNumber.
-        // If succeeded to find out the vendor - returns the name of the vendor, otherwise - returns "Unknown"
-        // @inputCardNumber specifies credit card of the vendor.
-        public CardVendor GetCreditCardVendor(string inputCardNumber)
+        // property of the "m_number" field
+        public string Number
         {
-            string cardNumber = RemoveSpacesFromCreditCard(inputCardNumber);
+            get
+            {
+                return m_number;
+            }
+            set
+            {
+                m_number = value;
+            }
+        }
 
-            string first2 = cardNumber.Substring(0,2); // first two digit in a credit card
-            string first3 = cardNumber.Substring(0, 3); // first three digit in a credit card
-            string first4 = cardNumber.Substring(0, 4); // first four digit in a credit card
-            string first6 = cardNumber.Substring(0, 6); // first six digit in a credit card
+        // Retunrs credit card vendor.
+        // If succeeded to find out the vendor - returns the name of the vendor, otherwise - returns "Unknown".
+        public CardVendor GetVendor()
+        {
+            RemoveSpacesFromNumber();
+
+            string first2 = m_number.Substring(0, 2); // first two digit in a credit card number
+            string first3 = m_number.Substring(0, 3); // first three digit in a credit card number
+            string first4 = m_number.Substring(0, 4); // first four digit in a credit card number
+            string first6 = m_number.Substring(0, 6); // first six digit in a credit card number
 
             if (first2 == "34" || first2 == "37")
             {
                 return CardVendor.AmericanExpress;
             }
-            else if ( first2 == "50" ||
+            else if (first2 == "50" ||
                       first3 == "639" ||
                       first2 == "67" ||
-                      ( ("56".CompareTo(first2) <=0) && (first2.CompareTo("58") <= 0) )
+                      (("56".CompareTo(first2) <= 0) && (first2.CompareTo("58") <= 0))
                       )
             {
                 return CardVendor.Maestro;
             }
-            else if ( ("51".CompareTo(first2) <= 0 && first2.CompareTo("55") <= 0) || ("222100".CompareTo(first6) <=0 && first6.CompareTo("272099")<=0) )
+            else if (("51".CompareTo(first2) <= 0 && first2.CompareTo("55") <= 0) || ("222100".CompareTo(first6) <= 0 && first6.CompareTo("272099") <= 0))
             {
                 return CardVendor.MasterCard;
             }
-            else if (cardNumber[0] == '4')
+            else if (m_number[0] == '4')
             {
                 return CardVendor.Visa;
             }
-            else if ( ("3528".CompareTo(first4) <= 0) && (first4.CompareTo("3589") <= 0) )
+            else if (("3528".CompareTo(first4) <= 0) && (first4.CompareTo("3589") <= 0))
             {
                 return CardVendor.JCB;
             }
@@ -64,39 +73,51 @@ namespace CardSystem
             }
         }
 
-        // If @inputCardNumber is valid - returns true, otherwise - return false
-        // The verification is done using Luhn algorithm.
-        // @inputCardNumber specifies credit card of the vendor.
-        public bool IsCreditCardNumberValid(string inputCardNumber)
+        // Returns credit card vendor as a string.
+        public string GetVendorAsString()
         {
-            string cardNumber = RemoveSpacesFromCreditCard(inputCardNumber);
-            return CalculateSumOfAllDigits(cardNumber, true) % 10 == 0;
+            CardVendor cardVendor = GetVendor();
+            if (cardVendor == CardVendor.AmericanExpress)
+            {
+                return "American Express";
+            }
+            else
+            {
+                return cardVendor.ToString();
+            }
         }
 
-        // Generates next credit card number with the same issuer identification number.
+        // If the credit card number is valid - returns true, otherwise - return false
+        // The verification is done using Luhn algorithm.
+        public bool IsNumberValid()
+        {
+            RemoveSpacesFromNumber();
+            return CalculateSumOfAllDigits(m_number, true) % 10 == 0;
+        }
+
+        // Returns next credit card number with the same issuer identification number.
         // If there is a next credit card number with the same issuer identification number -
         // returns next credit card number with the same issuer identification number,
         // otherwise - is OverflowException is thrown out.
-        // @inputCardNumber specifies credit card.
-        public string GenerateNextCreditCardNumber(string inputCardNumber)
+        public string ReturnNextNumber()
         {
-            string individualAccountIdentifier = RemoveSpacesFromCreditCard(inputCardNumber);
+            RemoveSpacesFromNumber();
+            string individualAccountIdentifier = m_number;
 
             // discard issuer identification number and check digit
             string issuerIdentificationNumber = individualAccountIdentifier.Substring(0, kIINdigits);
             individualAccountIdentifier = individualAccountIdentifier.Substring(kIINdigits);
             individualAccountIdentifier = individualAccountIdentifier.Substring(0, individualAccountIdentifier.Length - 1);
 
-
             // check individual account identifier for the highest number
-            string limit = new string('9', individualAccountIdentifier.Length); // !!!!
+            string limit = new string('9', individualAccountIdentifier.Length);
             if (individualAccountIdentifier == limit)
             {
                 throw new OverflowException("individual account identifier already has the highest number");
             }
+
             // get next individual account identifier
             int x = int.Parse(individualAccountIdentifier);
-            //int x = atoi(individualAccountIdentifier.c_str());
             x++;
             individualAccountIdentifier = x.ToString();
 
@@ -106,21 +127,13 @@ namespace CardSystem
             return issuerIdentificationNumber + individualAccountIdentifier + checkDigit.ToString();
         }
 
-
-
-
-
-
-
-
-
-
+        // PROTECTED SECTION:
 
         // Implements "calculate the sum of all the digits" step of Luhn algorithm.
         // The function retunrs the sum of all the digits by @individualAccountIdentifier.
         // @individualAccountIdentifier specifies individual account identifier with or without check digit.
         // @withCheckDigit specifies specifies if whether a check digit is appended to @individualAccountIdentifier.
-        int CalculateSumOfAllDigits(string individualAccountIdentifier, bool withCheckDigit)
+        protected int CalculateSumOfAllDigits(string individualAccountIdentifier, bool withCheckDigit)
         {
             int sum = 0;
             uint nDigits = (uint)individualAccountIdentifier.Length;
@@ -144,7 +157,6 @@ namespace CardSystem
                     nDigit = nDigit * 2;
                 }
 
-
                 sum += nDigit / 10;
                 sum += nDigit % 10;
             }
@@ -153,46 +165,18 @@ namespace CardSystem
 
         // Returns @inputCardNumber without spaces.
         // @inputCardNumber specifies credit card number.
-        public string RemoveSpacesFromCreditCard(string inputCardNumber)
+        protected void RemoveSpacesFromNumber()
         {
-            string cardNumber = inputCardNumber;
-            cardNumber = cardNumber.Replace(" ", "");
-            foreach (char symbol in cardNumber)
+            m_number = m_number.Replace(" ", "");
+            foreach (char symbol in m_number)
             {
                 Debug.Assert(Char.IsDigit(symbol), "credit card comtains invalid symbols");
             }
-            return cardNumber;
         }
 
-        public string GetCreditCardVendorAsString(string inputCardNumber)
-        {
-            CardVendor cardVendor = GetCreditCardVendor(inputCardNumber);
-            if (cardVendor == CardVendor.AmericanExpress)
-            {
-                return "American Express";
-            }
-            else
-            {
-                return cardVendor.ToString();
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
+        protected string m_number; // number of a credit card
+        protected const int kIINdigits = 6; // number of digits of issuer identification number
+    } // CreditCard
+} // CardSystem
 
 
