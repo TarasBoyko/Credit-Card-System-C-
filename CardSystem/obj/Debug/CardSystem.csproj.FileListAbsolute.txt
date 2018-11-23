@@ -1,0 +1,6 @@
+D:\VS_Projects\CardSystem\CardSystem\bin\Debug\CardSystem.exe.config
+D:\VS_Projects\CardSystem\CardSystem\bin\Debug\CardSystem.exe
+D:\VS_Projects\CardSystem\CardSystem\bin\Debug\CardSystem.pdb
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.csprojResolveAssemblyReference.cache
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.exe
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.pdb
