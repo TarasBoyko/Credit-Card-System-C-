@@ -11,12 +11,21 @@ namespace CardSystem
 
     class CreditCard
     {
+        public enum CardVendor
+        {
+            AmericanExpress,
+            Maestro,
+            MasterCard,
+            Visa,
+            JCB,
+            Unknown
+        }
         const int kIINdigits = 6; // number of digits of issuer identification number
 
         // Retunrs credit card vendor by @inputCardNumber.
         // If succeeded to find out the vendor - returns the name of the vendor, otherwise - returns "Unknown"
         // @inputCardNumber specifies credit card of the vendor.
-        public string GetCreditCardVendor(string inputCardNumber)
+        public CardVendor GetCreditCardVendor(string inputCardNumber)
         {
             string cardNumber = RemoveSpacesFromCreditCard(inputCardNumber);
 
@@ -27,7 +36,7 @@ namespace CardSystem
 
             if (first2 == "34" || first2 == "37")
             {
-                return "American Express";
+                return CardVendor.AmericanExpress;
             }
             else if ( first2 == "50" ||
                       first3 == "639" ||
@@ -35,23 +44,23 @@ namespace CardSystem
                       ( ("56".CompareTo(first2) <=0) && (first2.CompareTo("58") <= 0) )
                       )
             {
-                return "Maestro";
+                return CardVendor.Maestro;
             }
             else if ( ("51".CompareTo(first2) <= 0 && first2.CompareTo("55") <= 0) || ("222100".CompareTo(first6) <=0 && first6.CompareTo("272099")<=0) )
             {
-                return "Mastercard";
+                return CardVendor.MasterCard;
             }
             else if (cardNumber[0] == '4')
             {
-                return "Visa";
+                return CardVendor.Visa;
             }
             else if ( ("3528".CompareTo(first4) <= 0) && (first4.CompareTo("3589") <= 0) )
             {
-                return "JCB";
+                return CardVendor.JCB;
             }
             else
             {
-                return "Unknown";
+                return CardVendor.Unknown;
             }
         }
 
@@ -153,6 +162,19 @@ namespace CardSystem
                 Debug.Assert(Char.IsDigit(symbol), "credit card comtains invalid symbols");
             }
             return cardNumber;
+        }
+
+        public string GetCreditCardVendorAsString(string inputCardNumber)
+        {
+            CardVendor cardVendor = GetCreditCardVendor(inputCardNumber);
+            if (cardVendor == CardVendor.AmericanExpress)
+            {
+                return "American Express";
+            }
+            else
+            {
+                return cardVendor.ToString();
+            }
         }
     }
 
