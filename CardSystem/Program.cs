@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CardSystem
 {
-    public enum CardVendor
+
+public enum CardVendor
     {
         AmericanExpress,
         Maestro,
@@ -14,13 +19,36 @@ namespace CardSystem
         Visa,
         JCB,
         Unknown
-    }
+    }  
 
+    
     class Program
     {
         static void Main(string[] args)
         {
-            CreditCard creditCard = new CreditCard("378282246310005");
+            for ( int i = 0; i < 6; i++)
+            Console.WriteLine(Enum.GetValues(typeof(CardVendor)).GetValue(i));
+            Console.ReadLine();
+            CreditCard creditCard = new CreditCard("9999999999999999907");
+            Console.WriteLine(creditCard.IsNumberValid() + " " + creditCard.GetVendorAsString() + " " + creditCard.ReturnNextNumber());
+            
+            try
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    creditCard.Number = creditCard.ReturnNextNumber();
+                    Console.WriteLine(creditCard.IsNumberValid() + " " + creditCard.GetVendorAsString() + " " + creditCard.Number);
+                }
+            }
+            catch(OverflowException e)
+            {
+                Console.WriteLine("Exception!!! " + e.Message);
+
+            }
+
+            
+            Console.ReadLine();
+
 
             string[] arr = new string[]
             {
@@ -32,13 +60,13 @@ namespace CardSystem
                 "38520000023237",
                 "6011111111111117",
                 "6011000990139424",
-                "3530111333300000",
-                "3566002020360505",
+               // "3530111333300000",
+               // "3566002020360505",
                 "5555555555554444",
                 "5105105105105100",
                 "4111111111111111",
                 "4012888888881881",
-                "4222222222222",
+               // "4222222222222",
             };
 
             string[] hughNumbers = new string[]
@@ -51,13 +79,13 @@ namespace CardSystem
                 "8999907",
                 "899990004",
                 "899990007",
-                "899990006",
-                "899990003",
+                //"899990006",
+              //  "899990003",
                 "899990008",
                 "899990007",
                 "899990004",
                 "899990002",
-                "890002",
+              //  "890002",
            };
 
 
@@ -84,6 +112,7 @@ namespace CardSystem
             Console.ReadKey();
 
             Console.WriteLine("\ngeneration\n");
+            bool isAllOK = true;
 
             for (int i = 0;  i < arr.Length; i++ )
             {
@@ -92,9 +121,14 @@ namespace CardSystem
                 Console.WriteLine(card);
                 try
                 {
-                    while (creditCard.IsNumberValid())
+                    for ( int j = 0; j < 100000; j++)
                     {
-                        Console.WriteLine(card + " " + creditCard.GetVendorAsString());
+                        Console.WriteLine((isAllOK &= creditCard.IsNumberValid()) + " " + card + " " + creditCard.GetVendorAsString());
+                        if ( !isAllOK )
+                        {
+                            Console.WriteLine("test is not passed");
+                            Console.ReadLine();
+                        }
                         card = creditCard.ReturnNextNumber();
                         creditCard.Number = card;
                     }
@@ -112,11 +146,12 @@ namespace CardSystem
                     Console.WriteLine("finally");
                 }
 
-                Console.ReadKey();
+                //Console.ReadKey();
 
             }
 
-            Console.ReadKey();
-        }
+            Console.WriteLine("All test are passed " + isAllOK);
+            Console.ReadLine();
+        } // Main
     }
 }

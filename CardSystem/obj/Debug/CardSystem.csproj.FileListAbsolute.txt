@@ -4,3 +4,8 @@ D:\VS_Projects\CardSystem\CardSystem\bin\Debug\CardSystem.pdb
 D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.csprojResolveAssemblyReference.cache
 D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.exe
 D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.pdb
+D:\VS_Projects\CardSystem\CardSystem\bin\Debug\en-US\CardSystem.resources.dll
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.Language.strings.resources
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.Language.strings.en-US.resources
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\CardSystem.csproj.GenerateResource.Cache
+D:\VS_Projects\CardSystem\CardSystem\obj\Debug\en-US\CardSystem.resources.dll
