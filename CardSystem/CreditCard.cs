@@ -39,7 +39,7 @@ namespace CardSystem
             // specifies special card number lengths
             m_cardNumberRangeValidatonMap = new Dictionary<CardVendor, Predicate<int>>
             {
-                [CardVendor.JCB] = (numberOfDigits) => (numberOfDigits == 16)
+                [CardVendor.JCB] = (numberOfDigits) => (numberOfDigits != 15 && kMinCardNumberLength <= numberOfDigits && numberOfDigits <= kMaxCardNumberLength)
             };
 
             // specifies common card number length
@@ -123,7 +123,7 @@ namespace CardSystem
         // If there is a next credit card number,
         // returns next credit card number,
         // otherwise - is OverflowException is thrown out.
-        // "m_number" have to be valid.
+        // Before call this method "m_number" have to be valid.
         public string ReturnNextNumber()
         {
             RemoveSpacesFromNumber();

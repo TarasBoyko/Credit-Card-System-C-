@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -60,7 +61,7 @@ public enum CardVendor
                 "38520000023237",
                 "6011111111111117",
                 "6011000990139424",
-               // "3530111333300000",
+                //"3530111333300000",
                // "3566002020360505",
                 "5555555555554444",
                 "5105105105105100",
@@ -79,7 +80,7 @@ public enum CardVendor
                 "8999907",
                 "899990004",
                 "899990007",
-                //"899990006",
+               // "899990006",
               //  "899990003",
                 "899990008",
                 "899990007",
@@ -150,7 +151,11 @@ public enum CardVendor
 
             }
 
+            creditCard.Number = "3530 1113 3330 0000 1";
+
+            isAllOK &= creditCard.IsNumberValid();
             Console.WriteLine("All test are passed " + isAllOK);
+
             Console.ReadLine();
         } // Main
     }
